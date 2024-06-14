@@ -8,5 +8,8 @@
   "name": "MyOwnOrg",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "59.0"
+  "sourceApiVersion": "59.0",
+  "oauthLocalPort" : "1919"
 }
+
+
