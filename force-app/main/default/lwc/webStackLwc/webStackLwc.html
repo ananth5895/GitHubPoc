@@ -1,0 +1,29 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 05-26-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+
+
+<!--  this is Bike -->
+<template>
+    <h1>webStrackLwc Component</h1>
+
+  <!-- <img src={bike.picture} alt="bike picture" />
+    <p>{bike.name}</p> --> 
+
+    <ul>
+        <template for:each={datas} for:item="account" for:index="index">
+            <li key={account.Id}>{account.Name}</li>
+        </template>
+    </ul>
+
+    <lightning-card  title="Hello">
+      <lightning-button label="New" slot="actions"></lightning-button>
+      <p class="slds-p-horizontal_small">Card Body (custom component)</p>
+      <p slot="footer">Card Footer</p>
+  </lightning-card>
+
+</template>
