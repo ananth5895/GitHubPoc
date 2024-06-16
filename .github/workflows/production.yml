@@ -1,0 +1,58 @@
+name: Production Pipeline
+run-name: ${{ github.actor }} is running pipeline on ${{ github.repository }}
+ # on: [push]
+on: 
+  pull_request:
+    types: [closed]
+    branches:
+        - master
+        - main
+    paths:
+        - 'force-app/**'
+
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      
+  build:
+    runs-on: ubuntu-latest
+    environment: Developer
+    steps:
+      # Checkout the Source code from the latest commit
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Install NPM
+        run: |
+          npm install
+      # Install the SFDX CLI using the npm command
+      - name: Install the SFDX CLI
+        run: |
+          npm install @salesforce/cli --global
+          sf --help
+      - name: Decrypt the server.key.enc file & store inside assets folder
+        run: |
+          openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K DE3B4F6346E0CFA95CA695168A0FD8DA4D06AE808A0AFA9A4DBD2502D5DD6FE7 -iv AC767FEDCF2105140E84B62495C3F43A
+
+      - name: Authenticate to Salesforce
+        run: |
+          sf org login jwt --client-id 3MVG95mg0lk4batgqRYzXgS_Ooe1.VjOVTIXN1xbkXg.ZwCwnkvs75crGOezDPHq8Eevqd8G0fTq67H2XB8Ie --jwt-key-file assets/server.key --username ananthakumar@technorucs.com --set-default --alias HubOrg --instance-url https://login.salesforce.com
+        #
+      - name: Validate Source Code Against Salesforce ORG
+        run: |
+         sf project deploy start --source-dir force-app --test-level RunLocalTests --target-org HubOrg --coverage-formatters clover
+      
